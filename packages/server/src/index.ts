@@ -148,6 +148,10 @@ export class Server {
       callData = req.body.data;
     }
 
+    if (sender == 'REDACTED') {
+      sender = '0x0000000000000000000000000000000000000000';
+    }
+
     if (!isAddress(sender) || !isBytesLike(callData)) {
       res.status(400).json({
         message: 'Invalid request format',
