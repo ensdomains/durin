@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "bun --watch src/index.ts",
     "build": "tsc --outDir ./out",
+    "deploy": "wrangler deploy",
     "start": "bun src/index.ts"
   },
   "devDependencies": {

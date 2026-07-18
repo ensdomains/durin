@@ -1,7 +1,7 @@
 name = "durin-gateway"
 main = "./src/index.ts"
-compatibility_date = "2026-07-18"
-preview_urls = true
+compatibility_date = "2026-07-08"
+preview_urls = false
 keep_vars = true
 
 [observability]
