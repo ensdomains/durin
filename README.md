@@ -1,6 +1,9 @@
 # <img src="https://github.com/user-attachments/assets/4f01ef6e-3c1e-4201-83db-fac4b383a3b0" alt="durin" width="33%">
 
-Durin is an opinionated approach to ENS L2 subnames. Durin consists of:
+> [!WARNING]
+> This is an experimental project and may include frequent breaking changes. Do not rely on it for production workflows.
+
+Durin is an opinionated approach to ENS L2 subnames. This repo includes:
 
 1. Registry factory on [supported chains](#active-registry-factory-deployments)
 2. Registrar template
