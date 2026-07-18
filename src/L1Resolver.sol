@@ -37,6 +37,10 @@ interface INameWrapper {
     function ownerOf(uint256 id) external view returns (address owner);
 }
 
+interface IV2EthRegistry {
+    function findOwner(string calldata label) external view returns (address owner);
+}
+
 /// @author NameStone
 /// @notice ENS resolver that directs all queries to a CCIP Read gateway.
 /// @dev Callers must implement EIP-3668 and ENSIP-10.
@@ -55,6 +59,7 @@ contract L1Resolver is IExtendedResolver, Ownable {
     //////////////////////////////////////////////////////////////*/
 
     ENS public constant ens = ENS(0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e);
+    IV2EthRegistry public constant v2EthRegistry = IV2EthRegistry(0xDEDB92913A25abE1f7BCDD85D8A344a43B398B67);
 
     /*//////////////////////////////////////////////////////////////
                             STATE VARIABLES
@@ -119,7 +124,29 @@ contract L1Resolver is IExtendedResolver, Ownable {
                             PUBLIC FUNCTIONS
     //////////////////////////////////////////////////////////////*/
 
-    /// @notice Specify the L2 registry for a given name. Should only be used with 2LDs, e.g. "nick.eth".
+    /// @notice Specify the L2 registry for a given ENSv2 name. Enter a 2LD label, e.g. "nick" for "nick.eth".
+    function setL2RegistryV2(
+        string calldata label,
+        uint64 targetChainId,
+        address targetRegistryAddress
+    ) external {
+        address owner = v2EthRegistry.findOwner(label);
+        if (owner != msg.sender) {
+            revert Unauthorized();
+        }
+
+        bytes32 labelhash = keccak256(bytes(label));
+        bytes32 parentNode = 0x93cdeb708b7545dc668eb9280176169d1c33cfd8ed6f04690a0bcc88a93fc4ae; // .eth
+        bytes32 node = keccak256(abi.encodePacked(parentNode, labelhash));
+        
+        l2Registry[node] = L2Registry({
+            chainId: targetChainId,
+            registryAddress: targetRegistryAddress
+        });
+        emit L2RegistrySet(node, targetChainId, targetRegistryAddress);
+    }
+
+    /// @notice Specify the L2 registry for a given ENSv1 name. Should only be used with 2LDs, e.g. "nick.eth".
     function setL2Registry(
         bytes32 node,
         uint64 targetChainId,
